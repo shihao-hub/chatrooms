@@ -21,7 +21,7 @@ let cache = {};
 
 // 创建 HTTP 服务器
 let server = http.createServer(function (request, response) {
-    print("HTTP: " + request.url);
+    print(new Date().toLocaleString() + " HTTP: " + request.url);
     let filePath = "";
     switch (request.url) {
         case ("/"): {
