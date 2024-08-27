@@ -13,7 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "socket.io": "~0.9.6",
-    "mime": "~1.2.7"
+    "mime": "~1.2.7",
+    "socket.io": "~0.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0"
   }
 }
