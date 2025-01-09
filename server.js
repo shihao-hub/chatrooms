@@ -1,8 +1,8 @@
 "use strict";
 
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const mime = require("mime");
 
@@ -11,7 +11,7 @@ const chatServer = require("./lib/chat_server");
 
 const cache = {
     data: {},
-    // (N)!: set(){} 和 set:()=>{} 不一样，后者是存粹的函数，前者不只是函数，比如前者可以访问 this，后者没有 this
+    // NOTE: set(){} 和 set:()=>{} 不一样，后者是存粹的函数，前者不只是函数，比如前者可以访问 this，后者没有 this
     set(key, value) {
         this.data[key] = value;
     },
@@ -20,13 +20,18 @@ const cache = {
     }
 };
 
+function _consoleLogWithPrefix(msg) {
+    console.log(new Date().toLocaleString() + ": " + msg);
+}
+
+
 function responseServerStatic(response, absPath) {
     /*
     * 提供静态文件服务，即将服务器上的文件响应给浏览器
     * 涉及文件缓存（更快），而且因为是静态资源，所以缓存很好用
     * */
     if (cache.get(absPath)) {
-        console.log(new Date().toLocaleString() + ": " + "取出缓存中键为 " + absPath + " 的数据");
+        _consoleLogWithPrefix("取出缓存中键为 " + absPath + " 的数据");
         return sendFile(response, absPath, cache.get(absPath));
     }
 
@@ -46,7 +51,7 @@ function responseServerStatic(response, absPath) {
 
 
     function sendFile(response, filePath, fileContents, status) {
-        status = status || 200;
+        status = status || 200; // status ?? 200
         response.writeHead(status, {
             // 自动找到对于文件的 MIME
             "Content-Type": mime.lookup(path.basename(filePath)) + "; charset=utf-8;"
@@ -67,7 +72,7 @@ function responseServerStatic(response, absPath) {
 (function () {
     /* 1. 创建静态文件服务器 -> serverStatic、send404、sendFile */
     const server = http.createServer(null, (request, response) => {
-        console.log(new Date().toLocaleString() + ": " + "HTTP " + request.url);
+        _consoleLogWithPrefix("HTTP " + request.url);
         // url 分发
         let filePath = "";
         switch (request.url) {
