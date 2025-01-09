@@ -18,6 +18,10 @@ class ListenHelper {
         this.nickNames = {}; // <socket.id, name>
         this.namesUsed = []; // name
         this.currentRoom = {}; // <socket.id, room>
+
+        // nickNames: Map<socket.id, name>
+        // namesUsed: Set
+        // currentRoom: Map<socket.id, room>
     }
 
 
@@ -27,33 +31,38 @@ class ListenHelper {
     assignGuestName(client_socket, guestNumber) {
         /* 分配用户昵称，如果有新的连接过来，分配一个原始编号名 */
         const constants = this.constants;
-        const socket = this.events;
         const events = this.events;
         const namesUsed = this.namesUsed;
         const nickNames = this.nickNames;
+
+        const socket = client_socket;
 
         const name = constants.initial_name_prefix + guestNumber;
 
         nickNames[socket.id] = name;
         pushEvent(socket, events.nameResult, {success: true, name: name});
         namesUsed.push(name); // 记录下来已经用过的名字
-        return guestNumber + 1;
     }
 
     /**
      * 与进入聊天室相关的逻辑
      */
-    joinRoom(client_socket, room) {
+    joinRoom(client_socket, roomName) {
         const io = this.io;
         const events = this.events;
         const currentRoom = this.currentRoom;
         const nickNames = this.nickNames;
 
+        const socket = client_socket;
+
+        // Question: js 怎么和 python 类似，似乎有个 locals()，即使定义在下面，上面也能用到？
+        //  需要熟练运用这个，肯定是有道理的！Lua 就不这样，这就让我好理解了很多
+
         class Local {
             generateUsersInRoomSummaryStr() {
-                let usersInRoom = io.sockets.clients(room);
+                let usersInRoom = io.sockets.clients(roomName);
                 if (usersInRoom.length > 1) {
-                    let usersInRoomSummary = "Users currently in " + room + ": ";
+                    let usersInRoomSummary = "Users currently in " + roomName + ": ";
                     // 类似打印列表而已
                     for (const i in usersInRoom) {
                         let userSocketId = usersInRoom[i].id;
@@ -73,17 +82,17 @@ class ListenHelper {
 
         const loc = new Local();
 
-        const socket = client_socket;
 
-        currentRoom[socket.id] = room;
+        currentRoom[socket.id] = roomName;
 
         // (Q)!: socket.join：让客户端加入一个特定的房间或频道，以便能够接收和发送消息
         // 将用户加入 Socket.IO 房间很容易，只要调用 socket 对象上的 join 方法即可！！！
-        socket.join(room);
+        socket.join(roomName);
 
-        pushEvent(socket, events.joinResult, {room: room});
-        pushEvent(socket.broadcast.to(room), events.message, {
-            text: nickNames[socket.id] + " has joined " + room + "."
+        pushEvent(socket, events.joinResult, {roomName: roomName});
+
+        pushEvent(socket.broadcast.to(roomName), events.message, {
+            text: nickNames[socket.id] + " has joined " + roomName + "."
         });
 
         const usersInRoomSummary = loc.generateUsersInRoomSummaryStr(nickNames);
@@ -106,7 +115,7 @@ class ListenHelper {
         // 监听到客户端的事件（发消息了）发生，则向房间广播（通知所有用户，给他们发送信息）
         // 所有用户在客户端监听到事件发生，则取到数据进行相关处理或者渲染
         listenForEvent(socket, events.message, (data) => {
-            pushEvent(socket.broadcast.to(data.room), events.message, {
+            pushEvent(socket.broadcast.to(data.roomName), events.message, {
                 text: nickNames[socket.id] + ": " + data.text
             });
         });

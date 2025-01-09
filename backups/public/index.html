@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="content">
+    <div id="room">
+        <!-- 显示当前可用聊天室列表的 div -->
+        <div id="room-list"></div>
+        <!-- 显示当前聊天消息的 div -->
+        <div id="messages"></div>
+
+        <form id="send-form">
+            <!-- 用户用来输入聊天命令和消息的表单输入元素 -->
+            <input id="send-message">
+            <input id="send-button" type="submit" value="Send">
+
+            <div id="help">
+                Chat commands:
+                <ul>
+                    <li>Change nickname: <code>/nick [username]</code></li>
+                    <li>Join/create room: <code>/join [room name]</code></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- 这里也有特别的逻辑，至少一点：url 为 /socket.io/socket.io.js 时，并没有调用 createServer 的回调函数 -->
+<script src="socket.io/socket.io.js" type="text/javascript"></script>
+<!--<script src="https://code.jquery.com/juery-1.8.0.min.js" type="text/javascript"></script>-->
+<script src="./js/jquery-1.8.0.min.js" type="text/javascript"></script>
+<script src="./js/chat.js" type="text/javascript"></script>
+<script src="./js/chat_ui.js" type="text/javascript"></script>
+
+</body>
+</html>
