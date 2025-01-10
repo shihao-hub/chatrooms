@@ -1,20 +1,18 @@
-/**
- * Created by baymax on 16/8/2.
- */
-var http = require("http");
-var fs = require("fs");
-var path = require("path");
-var mime = require("mime");
-var cache = {};
+let http = require("node:http");
+let fs = require("node:fs");
+let path = require("node:path");
 
-//所请求的文件不存在时发送404错误
+let mime = require("mime");
+let cache = {};
+
+// 所请求的文件不存在时发送404错误
 function send404(response) {
     response.writeHead(404, {"Content-Type": "text/plain"});
     response.write("Error 404: response not found");
     response.end();
 }
 
-//提供文件数据服务
+// 提供文件数据服务
 function sendFile(response, filePath, fileContents) {
     response.writeHead(200,
         {
@@ -24,7 +22,7 @@ function sendFile(response, filePath, fileContents) {
     response.end(fileContents);
 }
 
-//提供静态文件服务
+// 提供静态文件服务
 function serveStatic(response, cache, absPath) {
     if (cache[absPath]) {
         sendFile(response, absPath, cache[absPath]);
@@ -47,16 +45,15 @@ function serveStatic(response, cache, absPath) {
     }
 }
 
-//创建HTTP服务器的逻辑
-var server = http.createServer(function (request, response) {
-    var filePath = false;
-    if (request.url == "/") {
+// 创建HTTP服务器的逻辑
+let server = http.createServer(function (request, response) {
+    let filePath = false;
+    if (request.url === "/") {
         filePath = "public/index.html";
     } else {
         filePath = "public" + request.url;
     }
-    ;
-    var absPath = "./" + filePath;
+    let absPath = "./" + filePath;
     serveStatic(response, cache, absPath);
 });
 
@@ -64,5 +61,5 @@ server.listen(3002, function () {
     console.log("Server running at http://127.0.0.1:3002");
 });
 
-var chatServer = require("./lib/chat_server");//加载自定义模块
+let chatServer = require("./lib/chat_server"); //加载自定义模块
 chatServer.listen(server);
