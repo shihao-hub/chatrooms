@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script>
+    // js codes
+
+    function debugPrint(message, ...optionalParams) {
+        /**
+         * 开发环境下的打印，生产环境不允许打印，  <br>
+         * 原因之一：打印的时候对象将被控制台获取，垃圾回收失效。
+         */
+
+        console.log(message, ...optionalParams);
+    }
+
+    class Helper {
+        constructor() {
+            debugPrint("%s----%s", 123, 456);
+        }
+
+        readFile(filepath) {
+
+        }
+    }
+
+    let helper = new Helper();
+
+
+</script>
+
+</body>
+</html>
