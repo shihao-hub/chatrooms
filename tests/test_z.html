@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body onload="console.log(123);showKey(event)">
+
+<ul style="border: 1px solid black">
+    <li>item 1</li>
+    <li>item 2</li>
+    <li>item 3</li>
+</ul>
+
+<div id="dynamic-div"></div>
+
+<script>
+    let timer = (function () {
+        let module = {};
+
+        module.run = function () {
+            let dynamicDiv = document.querySelector('#dynamic-div');
+
+            let interval = 1000;
+            // 1. 注意，setInterval 会考虑执行时间，假如 T=100ms，执行时间为 5ms，则执行完等待 95ms 就会执行
+            setInterval(function () {
+                console.log(`我是一个周期为 ${interval / 1000} s 的定时器`);
+            }, interval);
+            // 2. 如果想要严格的间隔时间，可以用 setTimeout 实现，每次回调都新建一个 timer 即可
+            // setTimeout(function cb() {
+            //     console.log(`我是一个周期严格为 ${interval / 1000} s 的定时器`);
+            //     setTimeout(cb, interval);
+            // }, interval);
+
+            // 3. clearTimeout 和 clearInterval 可以直接取消未执行的定时器回调
+            //    这两个函数的应用场景举例：（setTimeout + clearTimeout 实现超时重传功能）
+            // NOTE: debounce: 防抖动
+            let debounce = (function () {
+                let module = {};
+
+                /**
+                 * @param fn
+                 * @param {number}delay
+                 * @returns {(function(event): void)|*}
+                 */
+                function debounce(fn, delay) {
+                    /*
+                        感想：人类的创造力！这函数实现的真妙啊。当然，**想出来这个设想的人更厉害**！
+
+                        关于上面这句话，还是有些感触。
+                        创新的重要性！中国的教育或者说人类的教育，其实都是一种力大出奇迹的穷举，
+                        哪怕是 985 毕业的学生，绝大部分也都是普通牛马，做一些苦力活，很难有创新。
+                        **创新属于天才！**
+                     */
+                    let timer = null; // 声明计时器
+                    return function (event) {
+                        let context = this;
+                        let args = arguments;
+                        console.log(`清除 ${timer} 定时器，重新定时`);
+                        clearTimeout(timer); // clearTimeout 的第一个参数不必判空
+                        timer = setTimeout(function () {
+                            fn.apply(context, args);
+                        }, delay);
+                    };
+                }
+
+                module.run = function () {
+                    dynamicDiv.addEventListener('click', debounce(function (event) {
+                        console.log('用户点击，触发 debounce:click 回调');
+                    }, 2500));
+                };
+
+                return module;
+            }());
+            debounce.run();
+
+            // 4. setTimeout(f, 0)有几个非常重要的用途。
+            //    https://wangdoc.com/javascript/async/timer
+
+            let opacity = 1;
+            let count = 0;
+            let fader = setInterval(function () {
+                count += 1;
+                opacity -= 0.1;
+                if (opacity >= 0) {
+                    dynamicDiv.style.opacity = opacity;
+                    dynamicDiv.textContent = `${count}`;
+                } else {
+                    clearInterval(fader);
+                }
+            }, 1000);
+
+        };
+
+        return module;
+    }());
+
+    // timer.run();
+
+    let promise = (function () {
+        /*
+        ## Promise
+        - Promise 使得 f1 和 f2 变成了链式写法。不仅改善了可读性，而且对于多层嵌套的回调函数尤其方便。
+          - Tip: 链式可以联想设计模式，总而言之，new Promise(step1).then(step2).then(step3) 的形式是值得参考的。
+        - 一旦状态发生变化，就凝固了，不会再有新的状态变化。
+          这也是 Promise 这个名字的由来，它的英语意思是“承诺”，一旦承诺成效，就不得再改变了。
+          这也意味着，Promise 实例的状态变化只可能发生一次。
+          （从“未完成”到“成功” 或 从“未完成”到“失败”）
+        -
+        ### 小结
+        1. 注意，本章只是 Promise 对象的简单介绍。
+        2. Promise 的优点在于，让回调函数变成了规范的链式写法，程序流程可以看得很清楚。
+
+         */
+        return function () {
+
+        };
+    }());
+    promise();
+
+    function showKey(e) {
+        console.log('ALT key pressed: ' + e.altKey);
+        console.log('CTRL key pressed: ' + e.ctrlKey);
+        console.log('META key pressed: ' + e.metaKey);
+        console.log('SHIFT key pressed: ' + e.shiftKey);
+    }
+
+    (function () {
+
+    })();
+
+    (function () {
+        var ul = document.querySelector('ul');
+
+        // 先进入 ul 节点，然后在节点内部移动，不会触发 mouseleave 事件
+        // 只有离开 ul 节点时，触发一次 mouseleave
+        // event.target 是 ul 节点
+        ul.addEventListener('mouseleave', function (event) {
+            event.target.style.color = 'purple';
+            setTimeout(function () {
+                event.target.style.color = '';
+            }, 500);
+        }, false);
+
+        // 先进入 ul 节点，然后在节点内部移动，mouseout 事件会触发多次
+        // event.target 是 li 节点
+        // ul.addEventListener('mouseout', function (event) {
+        //     event.target.style.color = 'orange';
+        //     setTimeout(function () {
+        //         event.target.style.color = '';
+        //     }, 500);
+        // }, false);
+    })();
+</script>
+</body>
+</html>

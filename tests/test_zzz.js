@@ -1,4 +1,4 @@
-let util = require('./lib/module/__init__').util;
+let util = require('./lib/module/__init__').utils;
 
 
 console.log(util);
