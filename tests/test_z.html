@@ -15,6 +15,37 @@
 <div id="dynamic-div"></div>
 
 <script>
+    function showKey(e) {
+        console.log('ALT key pressed: ' + e.altKey);
+        console.log('CTRL key pressed: ' + e.ctrlKey);
+        console.log('META key pressed: ' + e.metaKey);
+        console.log('SHIFT key pressed: ' + e.shiftKey);
+    }
+
+
+    (function () {
+        var ul = document.querySelector('ul');
+
+        // 先进入 ul 节点，然后在节点内部移动，不会触发 mouseleave 事件
+        // 只有离开 ul 节点时，触发一次 mouseleave
+        // event.target 是 ul 节点
+        ul.addEventListener('mouseleave', function (event) {
+            event.target.style.color = 'purple';
+            setTimeout(function () {
+                event.target.style.color = '';
+            }, 500);
+        }, false);
+
+        // 先进入 ul 节点，然后在节点内部移动，mouseout 事件会触发多次
+        // event.target 是 li 节点
+        // ul.addEventListener('mouseout', function (event) {
+        //     event.target.style.color = 'orange';
+        //     setTimeout(function () {
+        //         event.target.style.color = '';
+        //     }, 500);
+        // }, false);
+    })();
+
     let timer = (function () {
         let module = {};
 
@@ -95,7 +126,7 @@
         return module;
     }());
 
-    // timer.run();
+    timer.run();
 
     let promise = (function () {
         /*
@@ -116,41 +147,38 @@
 
         };
     }());
-    promise();
 
-    function showKey(e) {
-        console.log('ALT key pressed: ' + e.altKey);
-        console.log('CTRL key pressed: ' + e.ctrlKey);
-        console.log('META key pressed: ' + e.metaKey);
-        console.log('SHIFT key pressed: ' + e.shiftKey);
-    }
+    // promise();
 
-    (function () {
+    let dom = (function () {
+        return function () {
 
-    })();
+        };
+    }());
+
+    dom();
 
     (function () {
-        var ul = document.querySelector('ul');
+        setTimeout(function () {
+            // 文档节点（document）和文档类型节点（doctype）的textContent属性为null。
+            // 如果要读取整个文档的内容，可以使用：
+            // console.log(document.documentElement.textContent);
+        }, 0);
+    }());
 
-        // 先进入 ul 节点，然后在节点内部移动，不会触发 mouseleave 事件
-        // 只有离开 ul 节点时，触发一次 mouseleave
-        // event.target 是 ul 节点
-        ul.addEventListener('mouseleave', function (event) {
-            event.target.style.color = 'purple';
-            setTimeout(function () {
-                event.target.style.color = '';
-            }, 500);
-        }, false);
+    /*
+    ### Node 接口
+    1. DOM 只是一个接口规范，可以用各种语言实现。
+       所以严格地说，DOM 不是 JavaScript 语法的一部分，但是 DOM 操作是 JavaScript 最常见的任务，离开了 DOM，JavaScript 就无法控制网页。
+       关于 DOM，Python 的爬虫里面涉及了 xpath 应该也实现的是 DOM 接口规范，因此[该链接](https://wangdoc.com/javascript/dom/node)值得反复阅读。
+    2. 有 DOM 节点对象都继承了 Node 接口，拥有一些共同的属性和方法。
+    3. 
 
-        // 先进入 ul 节点，然后在节点内部移动，mouseout 事件会触发多次
-        // event.target 是 li 节点
-        // ul.addEventListener('mouseout', function (event) {
-        //     event.target.style.color = 'orange';
-        //     setTimeout(function () {
-        //         event.target.style.color = '';
-        //     }, 500);
-        // }, false);
-    })();
+    ### 随笔
+    1. 虽然学习的知识大部分情况用不到，但是除非全忘光了，比如遇到的时候终究会有熟悉感。而且知识本就难以量化，你无法评价自己学到的东西到底有没有用。
+    2. html 的 child nodes 似乎就是一个数组而已，不过是通过 css 更改他们之间的相对位置。比如：Node.prototype.appendChild()/document.body.appendChild()
+    3.
+     */
 </script>
 </body>
 </html>
