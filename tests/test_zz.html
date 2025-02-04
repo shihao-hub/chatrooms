@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="div-1">
+    <div id="div-2">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+    </div>
+</div>
+
+<!-- Question: 为什么登陆后不会跳转 -->
+<iframe src="https://chat.deepseek.com" width="600" height="600" allowfullscreen></iframe>
+
+<script>
+    (function () {
+        let div = document.getElementById('div-2');
+
+        let el = div.firstChild;
+        while (el !== null) {
+            if (el.nodeType === Node.TEXT_NODE) {
+                el = el.nextSibling;
+                continue;
+            }
+            console.log(el.textContent);
+            el = el.nextSibling;
+        }
+    }());
+</script>
+</body>
+</html>
